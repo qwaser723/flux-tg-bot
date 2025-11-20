@@ -7,7 +7,7 @@ import os
 
 TOKEN = "8580070471:AAGujcp6UwmaBNES6S01buVr8TzHFFF6cu4"
 bot = Bot(token=TOKEN)
-dp = Dispatcher()
+dp = Dispatcher(bot)
 
 API_URL = "https://t2i.mcpcore.xyz/api/free/generate"
 
