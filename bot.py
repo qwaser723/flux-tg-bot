@@ -3,9 +3,9 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import aiohttp
 import json
-import os
 
 TOKEN = "8580070471:AAGujcp6UwmaBNES6S01buVr8TzHFFF6cu4"
+
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
@@ -29,7 +29,7 @@ async def generate_image(prompt):
 @dp.message_handler(commands=['start'])
 async def start(m: types.Message):
     kb = InlineKeyboardMarkup(row_width=2)
-    kb.add(InlineKeyboardButton("Turbo", callback_data="m_turbo"))
+    kb.add(InlineKeyboardButton("Turbo", callback_data="turbo"))
     await m.answer("FluxArt PRO 2025\nПиши промт — получишь Flux-картинку за 8 сек!", reply_markup=kb)
 
 @dp.message_handler()
