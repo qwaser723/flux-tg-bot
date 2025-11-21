@@ -6,7 +6,7 @@ import aiohttp
 import os
 from aiohttp import web
 
-TOKEN = "7915198856:AAG3FE3kttx7LHZINz_BDHSAwFOj5ZGep5U"
+TOKEN = "8589799630:AAGc3xr-XMRtQ2OWIakid9xo96Fgqd3ZwOQ"
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
