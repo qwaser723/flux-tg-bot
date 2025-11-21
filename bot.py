@@ -4,12 +4,10 @@ from aiogram.filters import Command
 from aiogram.types import Message
 import aiohttp
 import json
+import os
+from aiohttp import web
 
-# ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
-# НОВЫЙ ТОКЕН УЖЕ ВСТАВЛЕН
 TOKEN = "7915198856:AAG3FE3kttx7LHZINz_BDHSAwFOj5ZGep5U"
-# ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
-
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
@@ -34,11 +32,7 @@ async def generate_image(prompt: str):
 
 @dp.message(Command("start"))
 async def cmd_start(message: Message):
-    await message.answer(
-        "FluxArt PRO 2025\n\n"
-        "Пиши любой промт — получай HD-картинку за 8–15 сек!\n\n"
-        "Примеры:\n• кот в космосе\n• девушка в киберпанке\n• реалистичный дракон"
-    )
+    await message.answer("FluxArt PRO 2025\nПиши промт — получай HD-картинку за 8–15 сек!\nПримеры: кот в космосе, девушка в киберпанке")
 
 @dp.message()
 async def generate(message: Message):
@@ -47,9 +41,23 @@ async def generate(message: Message):
     if url:
         await message.answer_photo(url, caption=f"Готово!\n\n{message.text}")
     else:
-        await message.answer("Ошибка генерации, попробуй другой промт")
+        await message.answer("Ошибка, попробуй другой промт")
+
+# ←←← ЭТОТ КУСОК ДЕРЖИТ RENDEЖ ЖИВЫМ
+async def web_handler(request):
+    return web.Response(text="Bot is alive!")
+
+app = web.Application()
+app.router.add_get('/', web_handler)
 
 async def main():
+    # запускаем веб-сервер на порту Render
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', int(os.environ.get("PORT", 8080)))
+    await site.start()
+    
+    # запускаем бота
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
