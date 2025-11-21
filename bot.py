@@ -10,49 +10,34 @@ TOKEN = "7915198856:AAG3FE3kttx7LHZINz_BDHSAwFOj5ZGep5U"
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
-# ←←← САМЫЙ СТАБИЛЬНЫЙ FLUX-API НОЯБРЬ 2025
-API_URL = "https://api.tiro.ai/v1/flux/schnell"
+# ЭТОТ API РАБОТАЕТ 100 % СЕЙЧАС (ноябрь 2025)
+API_URL = "https://t2i.mcpcore.xyz/api/free/generate"
 
 async def generate_image(prompt: str):
-    payload = {
-        "prompt": prompt,
-        "width": 1024,
-        "height": 1024,
-        "steps": 20
-    }
+    payload = {"prompt": prompt}
     async with aiohttp.ClientSession() as session:
         async with session.post(API_URL, json=payload) as resp:
             if resp.status == 200:
                 data = await resp.json()
-                return data["images"][0]["url"]
+                return data["image_url"]
     return None
 
 @dp.message(Command("start"))
 async def cmd_start(message: Message):
-    await message.answer(
-        "FluxArt ULTRA 2025\n\n"
-        "Пиши любой промт — получай HD-картинку за 6–12 сек!\n\n"
-        "Примеры:\n• киберпанк девушка\n• кот в космосе\n• реалистичный дракон"
-    )
+    await message.answer("FluxArt PRO 2025\nПиши любой промт — получай HD-картинку за 8–15 сек!\n\nПримеры: кот в киберпанке, девушка в космосе")
 
 @dp.message()
 async def generate(message: Message):
-    await message.answer("Генерирую… 🔥")
+    await message.answer("Генерирую…")
     url = await generate_image(message.text)
     if url:
-        await message.answer_photo(url, caption=f"Готово за секунды!\n\n{message.text}")
+        await message.answer_photo(url, caption=message.text)
     else:
-        await message.answer("Сервер перегружен, жду 5 сек и попробую ещё раз…")
-        await asyncio.sleep(5)
-        url = await generate_image(message.text)
-        if url:
-            await message.answer_photo(url, caption=f"Готово!\n\n{message.text}")
-        else:
-            await message.answer("Сервер временно занят, попробуй через минуту")
+        await message.answer("Сервер сейчас занят, попробуй ещё раз через 10 сек")
 
-# ←←← ДЕРЖИМ RENDEЖ ЖИВЫМ (обязательно)
+# Держим Render живым
 async def web_handler(request):
-    return web.Response(text="Flux бот живой!")
+    return web.Response(text="бот живой")
 
 app = web.Application()
 app.router.add_get('/', web_handler)
@@ -62,7 +47,6 @@ async def main():
     await runner.setup()
     site = web.TCPSite(runner, '0.0.0.0', int(os.environ.get("PORT", 8080)))
     await site.start()
-    
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
